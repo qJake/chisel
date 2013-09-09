@@ -11,15 +11,15 @@ A sharp, minimal charting library for .NET/WPF.
 **Coming soon:**
 
 * Line Charts
-* * Static Line Chart
-* * Multiple Data Lines
-* * Stacked Line Style
-* * Overlapping Line Style
+  * Static Line Chart
+  * Multiple Data Lines
+  * Stacked Line Style
+  * Overlapping Line Style
 * Bar Charts
-* * Continuous Bar Chart
-* * Static Bar Chart
-* * Multiple Bar Sets
-* * Stacked Bar Sets
+  * Continuous Bar Chart
+  * Static Bar Chart
+  * Multiple Bar Sets
+  * Stacked Bar Sets
 * Grid Lines
 * Chart Border Lines
 * Axis Labels
