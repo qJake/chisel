@@ -6,7 +6,7 @@
     <Grid>
         <DockPanel>
             <TextBlock DockPanel.Dock="Top" Text="CPU %" FontSize="17" Margin="5" />
-            <Chisel:LineChart Margin="5" x:Name="Chart" Background="White" />
+            <Chisel:ContinuousLineChart Margin="5" x:Name="Chart" RangeY="0,100" PointSize="0" />
         </DockPanel>
     </Grid>
 </Window>

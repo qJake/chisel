@@ -26,8 +26,6 @@ namespace Chisel.Samples
         {
             InitializeComponent();
 
-            Chart.SetOptions(new ChartOptions() { UpdateMode = ChartUpdateModes.Continuous, PointStyle = DataPointStyles.None });
-
             Task.Run(() =>
             {
                 PerformanceCounter cpuCounter = new PerformanceCounter()
@@ -41,7 +39,7 @@ namespace Chisel.Samples
                 {
                     Dispatcher.Invoke(() => Chart.Add(new DataPoint() { Y = cpuCounter.NextValue() }));
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                 }
             });
         }

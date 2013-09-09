@@ -52,12 +52,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data Objects\ChartOptions.cs" />
-    <Compile Include="Enums\ChartUpdateModes.cs" />
-    <Compile Include="Enums\DataLineStyles.cs" />
     <Compile Include="Data Objects\DataPoint.cs" />
-    <Compile Include="LineChart.cs" />
-    <Compile Include="Enums\DataPointStyles.cs" />
+    <Compile Include="ContinuousLineChart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
