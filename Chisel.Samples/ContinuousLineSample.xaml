@@ -1,0 +1,9 @@
+﻿<Window x:Class="Chisel.Samples.ContinuousLineSample"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Chisel="clr-namespace:Chisel;assembly=Chisel"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Chisel:LineChart Margin="5" x:Name="Chart" />
+    </Grid>
+</Window>
