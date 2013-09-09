@@ -6,7 +6,13 @@ A sharp, minimal charting library for .NET/WPF.
 
 **Implemented:**
 
-* Continuous Line Chart
+* Line Charts
+  * Continuous Line Chart
+    * History Length (Number of points to plot before falling off)
+    * Min/Max (Auto if not set)
+    * Insert Direction (Right to left, or left to right)
+  * Line Style / Size
+  * Point Style / Size (Border and Fill)
 
 **Coming soon:**
 
