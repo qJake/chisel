@@ -79,6 +79,10 @@ namespace Chisel
         public void Add(DataPoint point)
         {
             Points.Add(point);
+            if (Points.Count > HistoryLength)
+            {
+                Points = Points.GetRange(Points.Count - HistoryLength, HistoryLength);
+            }
             Refresh();
         }
 

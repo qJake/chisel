@@ -35,7 +35,7 @@ namespace Chisel.Samples
                 {
                     Dispatcher.Invoke(() => Chart.Add(new DataPoint() { Y = r.Next(0, 100) }));
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(50);
                 }
             });
         }
