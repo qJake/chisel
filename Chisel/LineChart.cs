@@ -71,6 +71,7 @@ namespace Chisel
             Options = new ChartOptions();
             HistoryLength = 100;
 
+            // Debug
             Background = Brushes.LightGray;
 
             Refresh();
@@ -107,11 +108,11 @@ namespace Chisel
             if (Options.UpdateMode == ChartUpdateModes.Continuous)
             {
                 // TODO: If Linq is too slow, switch to a for() with indices
-                foreach (var point in ((IEnumerable<DataPoint>)Points).Reverse().Take(HistoryLength).Reverse())
+                foreach (var point in ((IEnumerable<DataPoint>)Points).Reverse().Take(HistoryLength))
                 {
                     if (Options.UpdateMode == ChartUpdateModes.Continuous)
                     {
-                        double translatedY = Normalize(MinY, MaxY, point.Y) * ActualHeight;
+                        double translatedY = (1D - Normalize(MinY, MaxY, point.Y)) * ActualHeight;
                         double translatedX = (1D - Normalize(0, HistoryLength, i)) * ActualWidth;
 
                         if (Options.PointStyle != DataPointStyles.None)
@@ -133,7 +134,7 @@ namespace Chisel
 
                         if (Options.LineStyle != DataLineStyles.None && prevPoint != null)
                         {
-                            double prevTranslatedY = Normalize(MinY, MaxY, prevPoint.Y) * ActualHeight;
+                            double prevTranslatedY = (1D - Normalize(MinY, MaxY, prevPoint.Y)) * ActualHeight;
                             double prevTranslatedX = (1D - Normalize(0, HistoryLength, i - 1)) * ActualWidth;
 
                             Line l = new Line();

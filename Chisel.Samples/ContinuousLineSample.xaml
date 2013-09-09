@@ -4,6 +4,9 @@
         xmlns:Chisel="clr-namespace:Chisel;assembly=Chisel"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        <Chisel:LineChart Margin="5" x:Name="Chart" />
+        <DockPanel>
+            <TextBlock DockPanel.Dock="Top" Text="CPU %" FontSize="17" Margin="5" />
+            <Chisel:LineChart Margin="5" x:Name="Chart" Background="White" />
+        </DockPanel>
     </Grid>
 </Window>

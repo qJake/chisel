@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -25,17 +26,22 @@ namespace Chisel.Samples
         {
             InitializeComponent();
 
-            Chart.SetOptions(new ChartOptions() { UpdateMode = ChartUpdateModes.Continuous });
+            Chart.SetOptions(new ChartOptions() { UpdateMode = ChartUpdateModes.Continuous, PointStyle = DataPointStyles.None });
 
             Task.Run(() =>
             {
-                Random r = new Random();
+                PerformanceCounter cpuCounter = new PerformanceCounter()
+                {
+                    CategoryName = "Processor",
+                    CounterName = "% Processor Time",
+                    InstanceName = "_Total"
+                };
 
                 while (true)
                 {
-                    Dispatcher.Invoke(() => Chart.Add(new DataPoint() { Y = r.Next(0, 100) }));
+                    Dispatcher.Invoke(() => Chart.Add(new DataPoint() { Y = cpuCounter.NextValue() }));
 
-                    Thread.Sleep(50);
+                    Thread.Sleep(500);
                 }
             });
         }
