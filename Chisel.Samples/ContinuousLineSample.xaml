@@ -2,11 +2,11 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Chisel="clr-namespace:Chisel;assembly=Chisel"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Continuous Line Sample" Height="200" Width="750">
     <Grid>
         <DockPanel>
             <TextBlock DockPanel.Dock="Top" Text="CPU %" FontSize="17" Margin="5" />
-            <Chisel:ContinuousLineChart Margin="5" x:Name="Chart" RangeY="0,100" PointSize="0" />
+            <Chisel:ContinuousLineChart Margin="5" x:Name="Chart" RangeY="0,100" PointSize="0" HistoryLength="150" InsertDirection="RightToLeft" />
         </DockPanel>
     </Grid>
 </Window>

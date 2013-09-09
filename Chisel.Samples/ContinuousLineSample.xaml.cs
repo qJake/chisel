@@ -39,7 +39,7 @@ namespace Chisel.Samples
                 {
                     Dispatcher.Invoke(() => Chart.Add(new DataPoint() { Y = cpuCounter.NextValue() }));
 
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                 }
             });
         }
