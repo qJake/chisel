@@ -13,14 +13,14 @@ A sharp, minimal charting library for .NET/WPF.
      * Insert Direction (Right to left, or left to right)
   * Line Style / Size
   * Point Style / Size (Border and Fill)
+  * Multiple Data Lines (Called "Series")
+     * Different line styles / point styles per series
 
 **Coming soon:**
 
 * Line Charts
   * Static Line Chart
-  * Multiple Data Lines
   * Stacked Line Style
-  * Overlapping Line Style
 * Bar Charts
   * Continuous Bar Chart
   * Static Bar Chart
