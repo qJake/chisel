@@ -5,46 +5,13 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Markup;
 
 namespace Chisel
 {
     public class ContinuousLineChart : Chart
     {
-        public List<DataPoint> Points { get; private set; }
-
         #region Dependency Properties
-
-        public Brush LineStroke
-        {
-            get { return (Brush)GetValue(LineStrokeProperty); }
-            set { SetValue(LineStrokeProperty, value); Refresh(); }
-        }
-        public static readonly DependencyProperty LineStrokeProperty =
-            DependencyProperty.Register("LineStroke", typeof(Brush), typeof(ContinuousLineChart), new PropertyMetadata(Brushes.Black));
-
-        public Brush PointStroke
-        {
-            get { return (Brush)GetValue(PointStrokeProperty); }
-            set { SetValue(PointStrokeProperty, value); Refresh(); }
-        }
-        public static readonly DependencyProperty PointStrokeProperty =
-            DependencyProperty.Register("PointStroke", typeof(Brush), typeof(ContinuousLineChart), new PropertyMetadata(Brushes.Black));
-
-        public Brush PointFill
-        {
-            get { return (Brush)GetValue(PointForegroundProperty); }
-            set { SetValue(PointForegroundProperty, value); Refresh(); }
-        }
-        public static readonly DependencyProperty PointForegroundProperty =
-            DependencyProperty.Register("PointForeground", typeof(Brush), typeof(ContinuousLineChart), new PropertyMetadata(Brushes.Black));
-
-        public double PointSize
-        {
-            get { return (double)GetValue(PointSizeProperty); }
-            set { SetValue(PointSizeProperty, value); Refresh(); }
-        }
-        public static readonly DependencyProperty PointSizeProperty =
-            DependencyProperty.Register("PointSize", typeof(double), typeof(ContinuousLineChart), new PropertyMetadata(3D));
 
         public Point? RangeY
         {
@@ -52,15 +19,7 @@ namespace Chisel
             set { SetValue(RangeYProperty, value); Refresh(); }
         }
         public static readonly DependencyProperty RangeYProperty =
-            DependencyProperty.Register("RangeY", typeof(Point?), typeof(ContinuousLineChart), new PropertyMetadata(null));
-
-        public Point? RangeX
-        {
-            get { return (Point?)GetValue(RangeXProperty); }
-            set { SetValue(RangeXProperty, value); Refresh(); }
-        }
-        public static readonly DependencyProperty RangeXProperty =
-            DependencyProperty.Register("RangeX", typeof(Point?), typeof(ContinuousLineChart), new PropertyMetadata(null));
+            DependencyProperty.Register("RangeY", typeof(Point?), typeof(ContinuousLineChart), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsArrange));
 
         public int HistoryLength
         {
@@ -68,7 +27,7 @@ namespace Chisel
             set { SetValue(HistoryLengthProperty, value); Refresh(); }
         }
         public static readonly DependencyProperty HistoryLengthProperty =
-            DependencyProperty.Register("HistoryLength", typeof(int), typeof(ContinuousLineChart), new PropertyMetadata(100));
+            DependencyProperty.Register("HistoryLength", typeof(int), typeof(ContinuousLineChart), new FrameworkPropertyMetadata(100, FrameworkPropertyMetadataOptions.AffectsArrange));
 
         public FlowDirection InsertDirection
         {
@@ -76,16 +35,15 @@ namespace Chisel
             set { SetValue(InsertDirectionProperty, value); }
         }
         public static readonly DependencyProperty InsertDirectionProperty =
-            DependencyProperty.Register("InsertDirection", typeof(FlowDirection), typeof(ContinuousLineChart), new PropertyMetadata(FlowDirection.RightToLeft));
+            DependencyProperty.Register("InsertDirection", typeof(FlowDirection), typeof(ContinuousLineChart), new FrameworkPropertyMetadata(FlowDirection.RightToLeft, FrameworkPropertyMetadataOptions.AffectsArrange));
 
         #endregion
-        
+
         private double MinY
         {
             get
             {
-                
-                return RangeY != null ? RangeY.Value.X : Points.Min(p => p.Y);
+                return RangeY != null ? RangeY.Value.X : DataSeries.Min(d => d.Points.Min(p => p.Y));
             }
         }
 
@@ -93,106 +51,107 @@ namespace Chisel
         {
             get
             {
-                return RangeY != null ? RangeY.Value.Y : Points.Min(p => p.Y);
+                return RangeY != null ? RangeY.Value.Y : DataSeries.Max(d => d.Points.Max(p => p.Y));
             }
         }
 
-        private double MinX
-        {
-            get
-            {
-                return RangeX != null ? RangeX.Value.X : Points.Min(p => p.Y);
-            }
-        }
-
-        private double MaxX
-        {
-            get
-            {
-                return RangeX != null ? RangeX.Value.Y : Points.Min(p => p.Y);
-            }
-        }        
-
-        public ContinuousLineChart()
-            : base()
-        {
-            Points = new List<DataPoint>();
-            Refresh();
-        }
-
-        public void Add(DataPoint point)
-        {
-            Points.Add(point);
-            if (Points.Count > HistoryLength)
-            {
-                Points = Points.GetRange(Points.Count - HistoryLength, HistoryLength);
-            }
-            Refresh();
-        }
-
-        private void Refresh()
+        public override void Refresh()
         {
             Children.Clear();
 
-            Canvas c = new Canvas();
-            
-            DataPoint prevPoint = null;
-
-            int i = 0;
-
-            IEnumerable<DataPoint> pointSet;
-
-            if (InsertDirection == FlowDirection.RightToLeft)
+            foreach (var series in DataSeries)
             {
-                pointSet = ((IEnumerable<DataPoint>)Points).Reverse().Take(HistoryLength);
-            }
-            else
-            {
-                pointSet = ((IEnumerable<DataPoint>)Points).Reverse().Take(HistoryLength).Reverse();
-            }
+                Point? prevPoint = null;
 
-            foreach (var point in pointSet)
-            {
-                double translatedY = (1D - Normalize(MinY, MaxY, point.Y)) * ActualHeight;
-                double translatedX = (InsertDirection == FlowDirection.RightToLeft) ? (1D - Normalize(0, HistoryLength, i)) * ActualWidth
-                                                                                    : Normalize(0, HistoryLength, i) * ActualWidth;
+                int i = 0;
 
-                Ellipse dot = new Ellipse();
+                IEnumerable<Point> pointSet;
 
-                Canvas.SetTop(dot, translatedY - (PointSize / 2));
-                Canvas.SetLeft(dot, translatedX - (PointSize / 2));
-
-                dot.Height = PointSize;
-                dot.Width = PointSize;
-                dot.Stroke = PointStroke;
-                dot.Fill = PointFill;
-
-                c.Children.Add(dot);
-
-                if (prevPoint != null)
+                if (InsertDirection == FlowDirection.RightToLeft)
                 {
-                    double prevTranslatedY = (1D - Normalize(MinY, MaxY, prevPoint.Y)) * ActualHeight;
-                    double prevTranslatedX = (InsertDirection == FlowDirection.RightToLeft) ? (1D - Normalize(0, HistoryLength, i - 1)) * ActualWidth
-                                                                                            : Normalize(0, HistoryLength, i - 1) * ActualWidth;
-
-                    Line l = new Line();
-                    l.X1 = translatedX;
-                    l.Y1 = translatedY;
-                    l.X2 = prevTranslatedX;
-                    l.Y2 = prevTranslatedY;
-
-                    l.Stroke = LineStroke;
-
-                    c.Children.Add(l);
+                    pointSet = ((IEnumerable<Point>)series.Points).Reverse().Take(HistoryLength);
+                }
+                else
+                {
+                    pointSet = ((IEnumerable<Point>)series.Points).Reverse().Take(HistoryLength).Reverse();
                 }
 
-                prevPoint = point;
-                i++;
+                foreach (var point in pointSet)
+                {
+                    // Prepare some local variables for efficiency
+                    var lLineStroke = NullUtilities.Coalesce(series.LineStroke, LineStroke);
+                    var lLineThickness = NullUtilities.Coalesce(series.LineThickness, LineThickness);
+                    var lPointSize = NullUtilities.Coalesce(series.PointSize, PointSize);
+                    var lPointStroke = NullUtilities.Coalesce(series.PointStroke, PointStroke);
+                    var lPointStrokeThickness = NullUtilities.Coalesce(series.PointStrokeThickness, PointStrokeThickness);
+                    var lPointFill = NullUtilities.Coalesce(series.PointFill, PointFill);
+
+                    double translatedY = (1D - Normalize(MinY, MaxY, point.Y)) * ActualHeight;
+                    double translatedX = (InsertDirection == FlowDirection.RightToLeft) ? (1D - Normalize(0, HistoryLength, i)) * ActualWidth
+                                                                                        : Normalize(0, HistoryLength, i) * ActualWidth;
+
+                    // Draw Line
+                    if (prevPoint != null)
+                    {
+                        double prevTranslatedY = (1D - Normalize(MinY, MaxY, prevPoint.Value.Y)) * ActualHeight;
+                        double prevTranslatedX = (InsertDirection == FlowDirection.RightToLeft) ? (1D - Normalize(0, HistoryLength, i - 1)) * ActualWidth
+                                                                                                : Normalize(0, HistoryLength, i - 1) * ActualWidth;
+
+                        Line l = new Line();
+                        l.X1 = translatedX;
+                        l.Y1 = translatedY;
+                        l.X2 = prevTranslatedX;
+                        l.Y2 = prevTranslatedY;
+
+                        l.Stroke = lLineStroke;
+                        l.StrokeThickness = lLineThickness;
+
+                        SetZIndex(l, 100);
+
+                        Children.Add(l);
+                    }
+
+                    // Draw Point
+                    FrameworkElement dot = null;
+
+                    switch (NullUtilities.Coalesce(series.PointStyle, PointStyle))
+                    {
+                        case PointStyle.Circle:
+                            dot = new Ellipse()
+                            {
+                                Height = lPointSize,
+                                Width = lPointSize,
+                                Stroke = lPointStroke,
+                                StrokeThickness = lPointStrokeThickness,
+                                Fill = lPointFill
+                            };
+                            break;
+
+                        case PointStyle.Square:
+                            dot = new Rectangle()
+                            {
+                                Height = lPointSize,
+                                Width = lPointSize,
+                                Stroke = lPointStroke,
+                                StrokeThickness = lPointStrokeThickness,
+                                Fill = lPointFill
+                            };
+                            break;
+                    }
+
+                    if (dot != null)
+                    {
+                        Canvas.SetTop(dot, translatedY - (lPointSize / 2));
+                        Canvas.SetLeft(dot, translatedX - (lPointSize / 2));
+
+                        SetZIndex(dot, 200);
+                        Children.Add(dot);
+                    }
+
+                    prevPoint = point;
+                    i++;
+                }
             }
-
-            Children.Add(c);
-
-            InvalidateArrange();
         }
 
         /// <summary>

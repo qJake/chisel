@@ -50,10 +50,12 @@
     <Compile Include="Chart.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Utilities\NullUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data Objects\DataPoint.cs" />
+    <Compile Include="Data Objects\Series.cs" />
     <Compile Include="ContinuousLineChart.cs" />
+    <Compile Include="Enums\PointStyle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
